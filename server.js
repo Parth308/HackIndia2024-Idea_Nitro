@@ -38,6 +38,10 @@ app.get('/block', (req, res) =>{
     res.render('block');
 })
 
+app.get('/blockchain', (req, res) =>{
+    res.render('blockchain');
+})
+
 app.get('/', (req, res) => {
     res.render('home');
 });

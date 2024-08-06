@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Tutorial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        body {
+            animation: fadeIn 0.5s ease-in;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Blockchain Tutorial</h1>
+        
+        <div class="bg-gray-800 p-4 rounded-lg mb-8">
+            <h4 class="text-xl font-semibold mb-2">Explanation</h4>
+            <p class="text-gray-300">
+                Now we start chaining blocks together. Every block (except for the first) has the hash of its predecessor in the "Prev" field. If you change one block, it will invalidate that block and all subsequent blocks.
+            </p>
+        </div>
+
+        <div id="blockchain" class="flex overflow-x-auto space-x-4 pb-4"></div>
+    </div>
+
+    <script>
+        function generateRandomNonce() {
+            return Math.floor(Math.random() * 100001);
+        }
+
+        class Block {
+            constructor(number, data, prev = '') {
+                this.number = number;
+                this.nonce = generateRandomNonce();
+                this.data = data;
+                this.prev = prev;
+                this.hash = this.calculateHash();
+                this.mined = false;
+            }
+
+            calculateHash() {
+                const blockString = this.number + this.nonce + this.data + this.prev;
+                return CryptoJS.SHA256(blockString).toString();
+            }
+
+            mine() {
+                this.nonce = generateRandomNonce();
+                this.hash = this.calculateHash();
+                this.mined = true;
+            }
+        }
+
+        class Blockchain {
+            constructor() {
+                this.chain = [
+                    new Block(1, '', '0'.repeat(64)),
+                    new Block(2, ''),
+                    new Block(3, ''),
+                    new Block(4, ''),
+                    new Block(5, '')
+                ];
+                this.updateChain();
+                this.renderChain();
+            }
+
+            updateChain() {
+                for (let i = 1; i < this.chain.length; i++) {
+                    this.chain[i].prev = this.chain[i-1].hash;
+                    this.chain[i].hash = this.chain[i].calculateHash();
+                }
+            }
+
+            renderChain() {
+                const blockchainDiv = document.getElementById('blockchain');
+                blockchainDiv.innerHTML = '';
+                this.chain.forEach((block, index) => {
+                    const blockElement = document.createElement('div');
+                    blockElement.id = `block-${block.number}`;
+                    blockElement.className = `flex-shrink-0 p-4 rounded-lg w-64 text-black ${block.mined ? 'bg-green-100' : 'bg-red-100'}`;
+                    blockElement.innerHTML = `
+                        <div class="mb-2">
+                            <span class="font-bold">Block:</span>
+                            <input type="text" value="#${block.number}" readonly class="w-full bg-gray-200 rounded px-2">
+                        </div>
+                        <div class="mb-2">
+                            <span class="font-bold">Nonce:</span>
+                            <input type="text" value="${block.nonce}" readonly class="w-full bg-gray-200 rounded px-2">
+                        </div>
+                        <div class="mb-2">
+                            <span class="font-bold">Data:</span>
+                            <input type="text" value="${block.data}" class="w-full rounded px-2" onchange="updateBlockData(${index}, this.value)">
+                        </div>
+                        <div class="mb-2 break-all">
+                            <span class="font-bold">Prev:</span>
+                            <input type="text" value="${block.prev.substring(0, 20)}..." readonly class="w-full bg-gray-200 rounded px-2">
+                        </div>
+                        <div class="mb-2 break-all">
+                            <span class="font-bold">Hash:</span>
+                            <input type="text" value="${block.hash.substring(0, 20)}..." readonly class="w-full bg-gray-200 rounded px-2">
+                        </div>
+                        <button onclick="mineBlock(${index})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
+                            Mine
+                        </button>
+                    `;
+                    blockchainDiv.appendChild(blockElement);
+                });
+            }
+
+            updateBlockData(index, newData) {
+                this.chain[index].data = newData;
+                this.chain[index].hash = this.chain[index].calculateHash();
+                this.chain[index].mined = false;
+                this.updateSubsequentBlocks(index + 1);
+                this.renderChain();
+            }
+
+            updateSubsequentBlocks(startIndex) {
+                for (let i = startIndex; i < this.chain.length; i++) {
+                    this.chain[i].prev = this.chain[i-1].hash;
+                    this.chain[i].hash = this.chain[i].calculateHash();
+                    this.chain[i].mined = false;
+                }
+            }
+
+            mineBlock(index) {
+                if (!this.chain[index].mined) { // Only mine if not mined
+                    this.chain[index].mine();
+                    this.updateSubsequentBlocks(index + 1);
+                    this.renderChain(); // Re-render the entire chain after mining to ensure proper state.
+                }
+            }
+        }
+
+        const blockchain = new Blockchain();
+
+        function updateBlockData(index, newData) {
+            blockchain.updateBlockData(index, newData);
+        }
+
+        function mineBlock(index) {
+            blockchain.mineBlock(index);
+        }
+    </script>
+</body>
+</html>
