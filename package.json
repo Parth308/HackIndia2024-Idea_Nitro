@@ -4,8 +4,9 @@
   "description": "hackindia 2024",
   "main": "index.js",
   "scripts": {
-  "build": "tailwindcss build styles.css -o output.css"
-},
+    "build": "tailwindcss build styles.css -o output.css",
+    "watch": "postcss styles.css -o output.css --watch"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,7 +16,8 @@
     "babelify": "^10.0.0",
     "grunt": "^1.6.1",
     "grunt-angular-templates": "^1.2.0",
-    "grunt-cli": "^1.5.0"
+    "grunt-cli": "^1.5.0",
+    "postcss": "^8.4.41"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.7"
