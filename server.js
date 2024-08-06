@@ -92,10 +92,7 @@ app.get('/login', (req, res) => {
 
 app.get('/profile', async (req, res) => {
     try {
-        const token = req.cookies.token;
-        const decoded = jwt.verify(token, 'Flash$123!@');
-        console.log(decoded);
-        const userId = decoded._id;
+        const userId = req.user?._id;
         const user = await User.findById(userId);
 
         if (!user) {
