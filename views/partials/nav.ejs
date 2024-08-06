@@ -11,7 +11,7 @@
         <a class="text-sm font-medium hover:underline underline-offset-4" href="/blockchain">Blockchain</a>
 
         <% if (locals.user) { %>
-            <a class="text-sm font-medium hover:underline underline-offset-4" href="/profile">User</a>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/profile?id=<%= user._id %>">User</a>
             <a class="text-sm font-medium hover:underline underline-offset-4" href="/logout">Logout</a>
         <% } else { %>
             <a class="text-sm font-medium hover:underline underline-offset-4" href="/login">Login</a>
