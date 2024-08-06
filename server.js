@@ -32,10 +32,14 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.use('/users', userRoutes);
 
 app.get('/hash', (req, res) =>{
-    res.render('hash');
+    res.render('hash',{
+        user: req.user
+    });
 })
 app.get('/block', (req, res) =>{
-    res.render('block');
+    res.render('block',{
+        user: req.user
+    });
 })
 
 app.get('/blockchain', (req, res) =>{
@@ -43,15 +47,21 @@ app.get('/blockchain', (req, res) =>{
 })
 
 app.get('/', (req, res) => {
-    res.render('home');
+    res.render('home',{
+        user: req.user
+    });
 });
 
 app.get('/signin', (req, res) => {
-    res.render('signin');
+    res.render('signin',{
+        user: req.user
+    });
 });
 
 app.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login',{
+        user: req.user
+    });
 });
 
 app.post('/signin', async (req, res) => {

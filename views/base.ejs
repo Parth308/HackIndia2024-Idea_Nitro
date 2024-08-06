@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnBlock</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    <style>
+        
+        main {
+            /* Ensuring main content occupies the full available height */
+            min-height: 100vh;
+            margin-top: 0; 
+            padding-top: 0;
+        }
+        .animate-color-reverse {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .animate-color-reverse:hover {
+            background-color: white; 
+            color: black; 
+        }
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+        .button-bounce {
+            animation: buttonBounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        @keyframes buttonBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        /* Ensuring the fadeIn animation works */
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('./partials/nav.ejs') %>
+
+    <main class="flex-1">
+        <%- content %>
+    </main>
+
+</body>
+</html>

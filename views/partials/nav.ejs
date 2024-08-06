@@ -1,0 +1,21 @@
+<header class="px-4 lg:px-6 h-14 flex items-center justify-between bg-black text-white">
+    <a class="flex items-center justify-center text-white" href="/">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+            <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
+        </svg>
+        <span class="ml-2 font-bold text-xl">LearnBlock</span>
+    </a>
+    <nav class="flex gap-4 sm:gap-6">
+        <a class="text-sm font-medium hover:underline underline-offset-4" href="/hash">Hash</a>
+        <a class="text-sm font-medium hover:underline underline-offset-4" href="/block">Block</a>
+        <a class="text-sm font-medium hover:underline underline-offset-4" href="/blockchain">Blockchain</a>
+
+        <% if (user) { %>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/profile">User</a>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/logout">Logout</a>
+        <% } else { %>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/login">Login</a>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/signin">Sign In</a>
+        <% } %>
+    </nav>
+</header>
