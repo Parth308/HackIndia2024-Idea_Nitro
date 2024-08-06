@@ -14,10 +14,16 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "babelify": "^10.0.0",
+    "crypto-js": "^4.2.0",
+    "ethers": "^6.13.2",
+    "express": "^4.19.2",
     "grunt": "^1.6.1",
     "grunt-angular-templates": "^1.2.0",
     "grunt-cli": "^1.5.0",
-    "postcss": "^8.4.41"
+    "mongoose": "^8.5.2",
+    "path": "^0.12.7",
+    "postcss": "^8.4.41",
+    "url": "^0.11.4"
   },
   "devDependencies": {
     "tailwindcss": "^3.4.7"

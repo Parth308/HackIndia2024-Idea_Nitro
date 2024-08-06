@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet</title>
+</head>
+<body>
+    <h1>Wallet</h1>
+    
+    <% if (user.tutorialCompleted) { %>
+        <% if (user.walletAddress) { %>
+            <p>Wallet Address: <%= user.walletAddress %></p>
+            <p>Private Key: <%= user.privateKey %></p>
+        <% } else { %>
+            <form action="/user/wallet" method="POST">
+                <button type="submit">Generate Wallet</button>
+            </form>
+        <% } %>
+    <% } else { %>
+        <p>Please complete the tutorial to generate a wallet.</p>
+    <% } %>
+    
+    <a href="/">Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<style>
+  .footer {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    padding: 1rem 0;
+    font-size: 1rem;
+  }
+  .footer a {
+    color: #b388ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .footer a:hover {
+    color: #7c4dff;
+  }
+  .footer h5 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    color: #6200ea;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .footer p, .footer li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+  .footer .social-icons {
+    display: flex;
+    justify-content: start;
+    margin-top: 1.5rem;
+  }
+  .footer .social-icons a {
+    color: #e0e0e0;
+    margin-right: 1.5rem;
+    font-size: 1.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  .footer .social-icons a:hover {
+    color: #6200ea;
+    transform: translateY(-3px);
+  }
+  .footer .contact-info a {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    background: #1e1e1e;
+    border-radius: 20px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .footer .contact-info a:hover {
+    background: #6200ea;
+    color: #ffffff;
+  }
+  .footer .quick-links li {
+    transition: transform 0.3s ease;
+    margin-bottom: 0.8rem;
+  }
+  .footer .quick-links li:hover {
+    transform: translateX(5px);
+  }
+  .footer .copyright {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #1e1e1e;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  .footer .newsletter {
+    margin-top: 1.5rem;
+    position: relative;
+  }
+  .footer .newsletter input {
+    padding: 0.5rem;
+    width: 70%;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    background: #333333;
+    color: white;
+  }
+  .footer .newsletter input::placeholder{
+    color: #b0b0b0;
+  }
+    
+  .footer .newsletter button {
+    padding: 0.5rem 1rem;
+    background: #6200ea;
+    color: #ffffff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .footer .newsletter button:hover {
+    background: #7c4dff;
+  }
+  .subscribe-message {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .subscribe-message.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @keyframes subscribed {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  .subscribed {
+    animation: subscribed 0.5s ease-in-out;
+  }
+</style>
+
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4">
+        <h5>About BloggingByte</h5>
+        <p>Discover the latest in tech and development. Our expert insights keep you at the forefront of innovation.</p>
+        <div class="newsletter">
+          <h5>Subscribe to Our Newsletter</h5>
+          <form id="newsletterForm">
+            <input type="email" placeholder="Enter your email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+            <button type="submit">Subscribe</button>
+          </form>
+          <div class="subscribe-message">Successfully subscribed!</div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <h5>Explore</h5>
+        <ul class="list-unstyled quick-links">
+          <li><a href="">Home</a></li>
+          <li><a href="">Articles</a></li>
+          <li><a href="">Tutorials</a></li>
+          <li><a href="">Resources</a></li>
+          <li><a href="">About Us</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-4 contact-info">
+        <h5>Get in Touch</h5>
+        <p>We'd love to hear from you!</p>
+        <p><a href="mailto:hello@bloggingbyte.com">hello@bloggingbyte.com</a></p>
+        <p><a href="tel:+1234567890">+91 23456 78912</a></p>
+        <div class="social-icons">
+          <a href="" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>&copy; <span id="year"></span> BloggingByte. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let form = this;
+    let subscribeMessage = form.nextElementSibling;
+    let submitButton = form.querySelector('button[type="submit"]');
+    
+    // Simulate form submission (replace with actual form submission logic)
+    setTimeout(function() {
+      form.reset();
+      subscribeMessage.classList.add('show');
+      submitButton.classList.add('subscribed');
+      
+      setTimeout(function() {
+        subscribeMessage.classList.remove('show');
+        submitButton.classList.remove('subscribed');
+      }, 3000);
+    }, 500);
+  });
+</script>
