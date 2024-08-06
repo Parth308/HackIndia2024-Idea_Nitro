@@ -89,13 +89,13 @@ app.get('/profile', async (req, res) => {
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.render("home");
+            return res.redirect("/");
         }
         res.render('profile', { user });
         
     } catch (err) {
         console.error('Error fetching user profile:', err.message);
-        res.render('home');
+        res.redirect('/');
     }
 });
 
@@ -124,7 +124,7 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const token = await User.matchPasswordAndGenerateToken(username, password);
-        return res.cookie("token", token).redirect('/',{user: req.user._id});
+        return res.cookie("token", token).redirect('/',{user: req.user});
     } catch (err) {
         console.error('Login error:', err.message);
         return res.render("login", { err: "Incorrect username or password" });
@@ -181,7 +181,7 @@ app.get('/wallet/generate', async (req, res) => {
         user_.publicKey= wallet.publicKey;
         await user_.save();
 
-        res.render('home', {user:user_._id}); 
+        res.render('home', {user:user_}); 
 
     } catch (err) {
         console.error('Error generating wallet:', err.message);
