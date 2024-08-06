@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="output.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> <!-- QR code library -->
+    <style>
+        /* Custom styles */
+        #qrcode {
+            border: 8px solid #4A90E2; /* Blue border for the QR code */
+            border-radius: 1rem; /* Rounded corners */
+            padding: 1rem; /* Padding inside the border */
+        }
+        .qr-label {
+            color: #4A90E2; /* Blue color for the label */
+            font-size: 1.25rem; /* Slightly larger font for the label */
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .detail-card {
+            background-color: #1F2937; /* Dark slate gray background for details card */
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .detail-text {
+            color: #9CA3AF; /* Light gray color for the details */
+        }
+        .detail-section {
+            margin-bottom: 2rem; /* Space between sections */
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #FFFFFF; /* White color for section titles */
+            margin-bottom: 1rem;
+        }
+        .detail-item {
+            margin-bottom: 1.5rem; /* Space between detail items */
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+<div class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="px-4 lg:px-6 h-16 flex items-center justify-between bg-black shadow-md">
+        <a class="flex items-center text-white" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
+            </svg>
+            <span class="ml-2 text-xl font-semibold">Blockchain Demo</span>
+        </a>
+        <nav class="flex gap-4">
+            <a class="text-sm font-medium hover:underline text-white" href="#">Hashing</a>
+            <a class="text-sm font-medium hover:underline text-white" href="#">Blockchain</a>
+            <a class="text-sm font-medium hover:underline text-white" href="#">Tokens</a>
+            <a class="text-sm font-medium hover:underline text-white" href="#">Coins</a>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="flex-1 bg-black py-12">
+        <div class="container mx-auto px-4 lg:px-6">
+            <div class="grid gap-6 lg:grid-cols-2 lg:gap-12">
+                <!-- User Info Section -->
+                <div class="space-y-6">
+                    <h1 class="text-4xl font-bold">User Profile</h1>
+                    <div class="detail-card">
+                        <div class="flex items-center gap-4 mb-6">
+                            <img class="h-16 w-16 rounded-full" alt="<%= user.username %>" src="/images/usericon.webp" />
+                            <div>
+                                <div class="text-2xl font-semibold"><%= user.username %></div>
+                                <div class="text-sm detail-text">
+                                    Wallet Address: <%= user.walletAddress || "Not Available" %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-600 my-4"></div>
+                        <div class="section-title">User Details</div>
+                        <div class="detail-section">
+                            <div class="detail-item">
+                                <div class="text-sm font-medium">Tutorial Completed</div>
+                                <div class="text-sm detail-text"><%= user.tutorialCompleted ? "Yes" : "No" %></div>
+                            </div>
+                            <% if (user.walletAddress) { %>
+                                <div class="detail-item">
+                                    <div class="text-sm font-medium">Private Key</div>
+                                    <div class="text-sm detail-text"><%= user.privateKey %></div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="text-sm font-medium">Public Key</div>
+                                    <div class="text-sm detail-text"><%= user.publicKey %></div>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- QR Code Section -->
+                <div class="flex flex-col items-center">
+                    <div id="qrcode" class="w-64 h-64 flex items-center justify-center">
+                        <!-- Placeholder for QR Code or fallback image -->
+                        <% if (!user.walletAddress) { %>
+                            <img src="/images/duck.webp" alt="No QR Code" class="w-full h-full object-cover rounded-xl">
+                        <% } %>
+                    </div>
+                    <div class="qr-label">Your Wallet</div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-black text-gray-400 py-4 text-center">
+        <p>&copy; 2024 Blockchain Demo. All rights reserved.</p>
+    </footer>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const walletAddress = '<%= user.walletAddress || "" %>';
+      const qrcodeElement = document.getElementById('qrcode');
+      
+      if (walletAddress) {
+          new QRCode(qrcodeElement, walletAddress);
+      } else {
+          console.log('No QR code to generate.');
+      }
+  });
+</script>
+</body>
+</html>

@@ -13,7 +13,8 @@
             <p>Wallet Address: <%= user.walletAddress %></p>
             <p>Private Key: <%= user.privateKey %></p>
         <% } else { %>
-            <form action="/user/wallet" method="POST">
+            <form action="/wallet/generate" method="GET">
+                <input type="hidden" name="userId" value="<%= user._id %>">
                 <button type="submit">Generate Wallet</button>
             </form>
         <% } %>

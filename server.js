@@ -4,8 +4,9 @@ import userRoutes from './src/routes/userRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import User from './src/models/userModel.js';
-import { ethers } from "ethers";
-import CryptoJS from 'crypto-js';
+import { ethers } from 'ethers';
+import cookieParser from 'cookie-parser';
+import { validateToken } from './src/services/auth.js';
 
 const app = express();
 const PORT = 3500;
@@ -19,8 +20,25 @@ mongoose.connect(mongoUri, {
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('MongoDB connection error:', err));
 
+function checkForAuthenticationCookie(cookieName) {
+    return (req, res, next) => {
+        const tokenCookieValue = req.cookies[cookieName];
+        if (!tokenCookieValue) return next();
+
+        try {
+            const userPayload = validateToken(tokenCookieValue);
+            req.user = userPayload;
+        } catch (error) {
+            console.error('Token validation error:', error);
+        }
+        return next();
+    };
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(checkForAuthenticationCookie("token"));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +59,7 @@ app.get('/block', (req, res) =>{
         user: req.user
     });
 })
+
 
 app.get('/blockchain', (req, res) =>{
     res.render('blockchain');
@@ -64,9 +83,24 @@ app.get('/login', (req, res) => {
     });
 });
 
+app.get('/profile', async (req, res) => {
+    try {
+        const userId = req.query.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.render("home");
+        }
+        res.render('profile', { user });
+        
+    } catch (err) {
+        console.error('Error fetching user profile:', err.message);
+        res.render('home');
+    }
+});
+
 app.post('/signin', async (req, res) => {
     const { username, password } = req.body;
-    console.log(req.body);
     try {
         const existingUser = await User.findOne({ username });
         if (existingUser) {
@@ -75,41 +109,34 @@ app.post('/signin', async (req, res) => {
 
         const newUser = new User({
             username,
-            password,
+            password, // Hash password before saving
         });
 
         await newUser.save();
-        console.log(newUser);
-
         res.status(201).redirect('/');
     } catch (err) {
+        console.error('Error signing up:', err.message);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid username or password' });
-        }
-
-        if (user.password !== password) {
-            return res.status(401).json({ message: 'Invalid username or password' });
-        }
-
-        res.redirect('/');
+        const token = await User.matchPasswordAndGenerateToken(username, password);
+        return res.cookie("token", token).redirect('/',{user: req.user._id});
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        console.error('Login error:', err.message);
+        return res.render("login", { err: "Incorrect username or password" });
     }
 });
 
+app.get('/logout', (req, res) => {
+    return res.clearCookie("token").redirect('/');
+});
 
 app.get('/wallet', async (req, res) => {
     const { userId } = req.query;
-
-    console.log('User ID:', userId);
 
     if (!userId) {
         return res.redirect('/');
@@ -123,48 +150,44 @@ app.get('/wallet', async (req, res) => {
         }
         res.render('wallet', { user });
     } catch (err) {
-        console.error('Error:', err.message);
+        console.error('Error fetching wallet:', err.message);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
 
 app.get('/wallet/generate', async (req, res) => {
     const { userId } = req.query;
-    console.log(userId);
 
     if (!userId) {
         return res.redirect('/wallet');
     }
 
     try {
-        const user = await User.findById(userId);
-        if (!user) {
+        const user_ = await User.findById(userId);
+        if (!user_) {
             return res.status(404).json({ message: 'User not found' });
         }
-        if (!user.tutorialCompleted) {
+        if (!user_.tutorialCompleted) {
             return res.status(403).json({ message: 'Complete the tutorial first' });
         }
-        if (user.walletAddress) {
+        if (user_.walletAddress) {
             return res.status(400).json({ message: 'Wallet already generated' });
         }
 
-        // Generate wallet
         const wallet = ethers.Wallet.createRandom();
-        console.log(wallet);
-        const key=2443;
-        const encryptedPrivateKey =  CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(key), 'phrase');
 
-        // Update user with wallet info
-        user.walletAddress = wallet.address;
-        user.privateKey = encryptedPrivateKey;
-        await user.save();
+        user_.walletAddress = wallet.address;
+        user_.privateKey = wallet.privateKey;
+        user_.publicKey= wallet.publicKey;
+        await user_.save();
 
-        res.redirect(`/wallet?userId=${user._id}`);
+        res.render('home', {user:user_._id}); 
+
     } catch (err) {
+        console.error('Error generating wallet:', err.message);
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
