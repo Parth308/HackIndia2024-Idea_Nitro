@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Mining</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #E0E0E0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #BB86FC;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+        .popup {
+            display: none;
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #2C2C2C;
+            color: #E0E0E0;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #BB86FC;
+            width: 80%;
+            z-index: 1000;
+        }
+        h1:hover + .popup {
+            display: block;
+        }
+        .form-control::placeholder {
+            color: #757575;
+        }
+    </style>
+</head>
+<body ng-controller="BlockController as vm">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl">Block Mining</h1>
+        <div class="popup">
+            A block is the smallest unit of a blockchain. It consists of a block number, nonce, data, previous block hash, and the resulting hash. The mining process involves adjusting the nonce until the hash meets a specified difficulty, represented by a certain number of leading zeros.
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
+            <div class="grid grid-cols-1 gap-4">
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300">Block:</label>
+                    <input type="number" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.number" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300">Nonce:</label>
+                    <input type="number" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.nonce">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300">Data:</label>
+                    <textarea class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.data" placeholder="Enter your data here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300">Previous Block Hash:</label>
+                    <input type="text" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.prev" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-gray-300">Hash:</label>
+                    <input type="text" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.hash" readonly>
+                </div>
+                <div class="mine-section text-center mt-6">
+                    <button class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700" ng-click="vm.mineBlock()">Mine</button>
+                    <span class="ml-4">{{vm.miningResult}}</span>
+                    <div class="dropdown inline-block relative ml-4">
+                        <button class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700" ng-click="vm.toggleDropdown()">
+                            Difficulty: {{vm.difficulty}} zeros
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu absolute text-gray-300 pt-1" ng-class="{'hidden': !vm.isDropdownOpen}">
+                            <li class="bg-gray-800 hover:bg-purple-600 rounded" ng-repeat="difficulty in vm.difficulties">
+                                <a class="py-2 px-4 block whitespace-no-wrap" href="#" ng-click="vm.setDifficulty(difficulty)">{{difficulty}} zeros</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script>
+        angular.module('app', [])
+            .controller('BlockController', function($scope, $timeout) {
+                var vm = this;
+
+                vm.isDropdownOpen = false;
+                vm.difficulties = [3, 4, 5];
+                vm.difficulty = 3;
+
+                vm.block = {
+                    number: 1,
+                    nonce: 0,
+                    data: '',
+                    prev: '0000000000000000000000000000000000000000000000000000000000000000',
+                    hash: ''
+                };
+
+                vm.setDifficulty = function(difficulty) {
+                    vm.difficulty = difficulty;
+                    vm.isDropdownOpen = false;
+                };
+
+                vm.toggleDropdown = function() {
+                    vm.isDropdownOpen = !vm.isDropdownOpen;
+                };
+
+                vm.mineBlock = function() {
+                    var startTime = performance.now();
+                    var target = Array(vm.difficulty + 1).join("0");
+                    vm.block.hash = CryptoJS.SHA256([vm.block.number, vm.block.nonce, vm.block.data, vm.block.prev].join('')).toString();
+
+                    while (vm.block.hash.substring(0, vm.difficulty) !== target) {
+                        vm.block.nonce++;
+                        vm.block.hash = CryptoJS.SHA256([vm.block.number, vm.block.nonce, vm.block.data, vm.block.prev].join('')).toString();
+                    }
+
+                    var endTime = performance.now();
+                    var timeTaken = (endTime - startTime) / 1000;
+                    var speed = Math.floor(vm.block.nonce / timeTaken);
+                    vm.miningResult = `Took ${timeTaken.toFixed(2)}s, Speed: ${speed} hashes/s`;
+                };
+            });
+    </script>
+</body>
+</html>
