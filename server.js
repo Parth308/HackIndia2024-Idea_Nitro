@@ -7,11 +7,16 @@ import User from './src/models/userModel.js';
 import { ethers } from 'ethers';
 import cookieParser from 'cookie-parser';
 import { validateToken } from './src/services/auth.js';
-
+import jwt from 'jsonwebtoken';
+import getUserFromCookie from './src/middlewares/getUserfromCookie.js';
+import trackVisits from './src/middlewares/trackermiddlware.js';
+import { createTokenForUser } from './src/services/auth.js';
 const app = express();
 const PORT = 3500;
 
 const mongoUri = "mongodb+srv://opkp:opkp7671090@spark2.c2yr3ct.mongodb.net/?retryWrites=true&w=majority&appName=spark2";
+
+// abhi ke liye importing user model
 
 mongoose.connect(mongoUri, {
     useNewUrlParser: true,
@@ -39,6 +44,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(checkForAuthenticationCookie("token"));
+app.use(getUserFromCookie);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,19 +55,20 @@ app.set('views', path.resolve(__dirname, 'views'));
 
 app.use('/users', userRoutes);
 
-app.get('/hash', (req, res) =>{
+
+app.get('/hash',trackVisits, (req, res) =>{
     res.render('hash',{
         user: req.user
     });
 })
-app.get('/block', (req, res) =>{
+app.get('/block',trackVisits, (req, res) =>{
     res.render('block',{
         user: req.user
     });
 })
 
 
-app.get('/blockchain', (req, res) =>{
+app.get('/blockchain',trackVisits, (req, res) =>{
     res.render('blockchain');
 })
 
@@ -85,7 +92,10 @@ app.get('/login', (req, res) => {
 
 app.get('/profile', async (req, res) => {
     try {
-        const userId = req.query.id;
+        const token = req.cookies.token;
+        const decoded = jwt.verify(token, 'Flash$123!@');
+        console.log(decoded);
+        const userId = decoded._id;
         const user = await User.findById(userId);
 
         if (!user) {
@@ -112,7 +122,9 @@ app.post('/signin', async (req, res) => {
             password, // Hash password before saving
         });
 
-        await newUser.save();
+        const savedUser = await newUser.save();
+        const token = createTokenForUser(savedUser);
+        res.cookie("token", token);
         res.status(201).redirect('/');
     } catch (err) {
         console.error('Error signing up:', err.message);
@@ -124,7 +136,8 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const token = await User.matchPasswordAndGenerateToken(username, password);
-        return res.cookie("token", token).redirect('/',{user: req.user});
+        res.cookie("token", token);
+        return res.redirect('/');
     } catch (err) {
         console.error('Login error:', err.message);
         return res.render("login", { err: "Incorrect username or password" });
@@ -135,31 +148,12 @@ app.get('/logout', (req, res) => {
     return res.clearCookie("token").redirect('/');
 });
 
-app.get('/wallet', async (req, res) => {
-    const { userId } = req.query;
-
-    if (!userId) {
-        return res.redirect('/');
-    }
-
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            console.log('User not found');
-            return res.status(404).render("/");
-        }
-        res.render('wallet', { user });
-    } catch (err) {
-        console.error('Error fetching wallet:', err.message);
-        res.status(500).json({ message: 'Server error', error: err.message });
-    }
-});
 
 app.get('/wallet/generate', async (req, res) => {
     const { userId } = req.query;
 
     if (!userId) {
-        return res.redirect('/wallet');
+        return res.redirect('/');
     }
 
     try {
@@ -181,7 +175,7 @@ app.get('/wallet/generate', async (req, res) => {
         user_.publicKey= wallet.publicKey;
         await user_.save();
 
-        res.render('home', {user:user_}); 
+        res.render('profile', {user:user_}); 
 
     } catch (err) {
         console.error('Error generating wallet:', err.message);

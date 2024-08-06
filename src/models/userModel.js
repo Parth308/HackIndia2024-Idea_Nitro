@@ -9,8 +9,10 @@ const userSchema = new mongoose.Schema({
   tutorialCompleted: { type: Boolean, default: false },
   walletAddress: { type: String },
   privateKey: { type: String },
-  publicKey: { type: String }
+  publicKey: { type: String },
+  visitedUrls: { type: [String], default: [] }
 });
+
 
 userSchema.pre('save', function (next) {
   const user = this;

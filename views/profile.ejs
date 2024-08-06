@@ -51,13 +51,13 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
                 <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
             </svg>
-            <span class="ml-2 text-xl font-semibold">Blockchain Demo</span>
+            <span class="ml-2 text-xl font-semibold">LearnBlock</span>
         </a>
         <nav class="flex gap-4">
-            <a class="text-sm font-medium hover:underline text-white" href="#">Hashing</a>
-            <a class="text-sm font-medium hover:underline text-white" href="#">Blockchain</a>
-            <a class="text-sm font-medium hover:underline text-white" href="#">Tokens</a>
-            <a class="text-sm font-medium hover:underline text-white" href="#">Coins</a>
+            <a class="text-sm font-medium hover:underline text-white" href="/">Home</a>
+            <a class="text-sm font-medium hover:underline text-white" href="/hash">Hashing</a>
+            <a class="text-sm font-medium hover:underline text-white" href="/block">Blockchain</a>
+            <a class="text-sm font-medium hover:underline underline-offset-4" href="/logout">Logout</a> 
         </nav>
     </header>
     
@@ -85,6 +85,24 @@
                                 <div class="text-sm font-medium">Tutorial Completed</div>
                                 <div class="text-sm detail-text"><%= user.tutorialCompleted ? "Yes" : "No" %></div>
                             </div>
+                            <% if (!user.tutorialCompleted) { %>
+                                <div class="mt-4 p-4 border rounded-lg">
+                                    <div class="text-lg font-medium mb-2">Kindly complete the tutorial on the following pages:</div>
+                                    <ul class="list-disc pl-5 text-lg">
+                                        <li><a href="/hash" class="text-blue-500 hover:underline">/hash</a></li>
+                                        <li><a href="/block" class="text-blue-500 hover:underline">/block</a></li>
+                                        <li><a href="/blockchain" class="text-blue-500 hover:underline">/blockchain</a></li>
+                                    </ul>
+                                </div>
+                            <% } %>                            
+                            <% if (user.tutorialCompleted && !user.walletAddress) { %>
+                                <div class="mt-4">
+                                    <form action="/wallet/generate" method="GET">
+                                        <input type="hidden" name="userId" value="<%= user._id %>">
+                                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Generate Wallet</button>
+                                    </form>
+                                </div>
+                            <% } %>
                             <% if (user.walletAddress) { %>
                                 <div class="detail-item">
                                     <div class="text-sm font-medium">Private Key</div>
