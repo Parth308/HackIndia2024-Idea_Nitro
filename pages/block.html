@@ -3,135 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Block Mining</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #121212;
-            color: #E0E0E0;
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            color: #BB86FC;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-            position: relative;
-            cursor: pointer;
-        }
-        .popup {
-            display: none;
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #2C2C2C;
-            color: #E0E0E0;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #BB86FC;
-            width: 80%;
-            z-index: 1000;
-        }
-        h1:hover + .popup {
-            display: block;
-        }
-        .form-control::placeholder {
-            color: #757575;
-        }
-    </style>
-</head>
-<body ng-controller="BlockController as vm">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl">Block Mining</h1>
-        <div class="popup">
-            A block is the smallest unit of a blockchain. It consists of a block number, nonce, data, previous block hash, and the resulting hash. The mining process involves adjusting the nonce until the hash meets a specified difficulty, represented by a certain number of leading zeros.
-        </div>
-
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
-            <div class="grid grid-cols-1 gap-4">
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-300">Block:</label>
-                    <input type="number" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.number" readonly>
-                </div>
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-300">Nonce:</label>
-                    <input type="number" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.nonce">
-                </div>
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-300">Data:</label>
-                    <textarea class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.data" placeholder="Enter your data here..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-300">Previous Block Hash:</label>
-                    <input type="text" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.prev" readonly>
-                </div>
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-300">Hash:</label>
-                    <input type="text" class="form-control w-full p-2 mt-1 bg-gray-900 text-gray-300 border border-gray-700 rounded" ng-model="vm.block.hash" readonly>
-                </div>
-                <div class="mine-section text-center mt-6">
-                    <button class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700" ng-click="vm.mineBlock()">Mine</button>
-                    <span class="ml-4">{{vm.miningResult}}</span>
-                    <div class="dropdown inline-block relative ml-4">
-                        <button class="bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700" ng-click="vm.toggleDropdown()">
-                            Difficulty: {{vm.difficulty}} zeros
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu absolute text-gray-300 pt-1" ng-class="{'hidden': !vm.isDropdownOpen}">
-                            <li class="bg-gray-800 hover:bg-purple-600 rounded" ng-repeat="difficulty in vm.difficulties">
-                                <a class="py-2 px-4 block whitespace-no-wrap" href="#" ng-click="vm.setDifficulty(difficulty)">{{difficulty}} zeros</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <title>Blockchain Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="output.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
-    <script>
-        angular.module('app', [])
-            .controller('BlockController', function($scope, $timeout) {
-                var vm = this;
+</head>
+<body ng-controller="BlockController as vm">
+<div class="flex flex-col min-h-[100dvh] bg-black text-white">
+  <header class="px-4 lg:px-6 h-14 flex items-center justify-between">
+    <a class="flex items-center justify-center text-white animate-fadeIn" href="#">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-6 w-6"
+      >
+        <path d="M11.767 19.089c4.924.868 6.14-6.025 1.216-6.894m-1.216 6.894L5.86 18.047m5.908 1.042-.347 1.97m1.563-8.864c4.924.869 6.14-6.025 1.215-6.893m-1.215 6.893-3.94-.694m5.155-6.2L8.29 4.26m5.908 1.042.348-1.97M7.48 20.364l3.126-17.727"></path>
+      </svg>
+      <span class="sr-only">Blockchain Demo</span>
+    </a>
+    <nav class="flex gap-4 sm:gap-6">
+      <a class="text-sm font-medium hover:underline underline-offset-4 text-white animate-fadeIn" href="#">
+        Hashing
+      </a>
+      <a href="#" class="text-sm font-medium hover:underline underline-offset-4 text-white animate-fadeIn">
+        Blockchain
+      </a>
+      <a class="text-sm font-medium hover:underline underline-offset-4 text-white animate-fadeIn" href="#">
+        Tokens
+      </a>
+      <a href="#" class="text-sm font-medium hover:underline underline-offset-4 text-white animate-fadeIn">
+        Coins
+      </a>
+    </nav>
+  </header>
+  <main class="flex-1">
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
+      <div class="container px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12 ">
+        <div class="space-y-4 animate-fadeIn">
+          <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl animate-fadeIn">
+            Blockchain Explained
+          </h1>
+          <div class="grid gap-4 bg-muted/20 p-6 rounded-lg animate-fadeIn">
+            <div class="space-y-4">
+              <p class="text-muted-foreground animate-fadeIn">
+                A blockchain is a decentralized, distributed digital ledger that records transactions across many
+                computers in a network. Each block in the chain contains a number of transactions, and every time a
+                new transaction occurs, a record of that transaction is added to every participant's ledger.
+              </p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 animate-fadeIn">
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 animate-fadeIn"
+                  for="block-number"
+                >
+                  Block Number
+                </label>
+                <input
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 animate-fadeIn text-black"
+                  id="block-number"
+                  placeholder="Block number"
+                  type="number"
+                  ng-model="vm.block.number"
+                />
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 animate-fadeIn"
+                  for="nonce"
+                >
+                  Nonce
+                </label>
+                <input
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 animate-fadeIn text-black"
+                  id="nonce"
+                  placeholder="Block nonce"
+                  type="number"
+                  ng-model="vm.block.nonce"
+                />
+              </div>
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 animate-fadeIn"
+                  for="data"
+                >
+                  Data
+                </label>
+                <input
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 animate-fadeIn text-black"
+                  id="data"
+                  placeholder="Block data"
+                  type="text"
+                  ng-model="vm.block.data"
+                />
+              </div>
+            </div>
+            <div class="grid gap-2 animate-fadeIn">
+              <label
+                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 animate-fadeIn"
+                for="prev-hash"
+              >
+                Previous Hash
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 animate-fadeIn text-black"
+                id="prev-hash"
+                placeholder="Previous block hash"
+                readonly=""
+                type="text"
+                ng-model="vm.block.prev"
+              />
+            </div>
+            <div class="grid gap-2 animate-fadeIn">
+              <label
+                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 animate-fadeIn"
+                for="hash"
+              >
+                Hash
+              </label>
+              <input
+                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 animate-fadeIn text-black"
+                id="hash"
+                placeholder="Block hash"
+                readonly=""
+                type="text"
+                ng-model="vm.block.hash"
+              />
+            </div>
+            <div class="grid gap-2 animate-fadeIn">
+              <button
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded animate-fadeIn"
+                ng-click="vm.mineBlock()"
+              >
+                Mine Block
+              </button>
+              <p class="text-sm text-muted-foreground animate-fadeIn" ng-if="vm.miningResult">
+                {{ vm.miningResult }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-muted/20 p-6 rounded-lg flex items-center justify-center animate-fadeIn border border-white">
+          <div class="text-center space-y-4 animate-fadeIn">
+            <img
+              src="/placeholder.svg"
+              alt="Block"
+              width="600"
+              height="600"
+              class="animate-fadeIn"
+              style="aspect-ratio: 300 / 300; object-fit: cover;"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+    angular.module('app', [])
+        .controller('BlockController', function($scope) {
+            var vm = this;
 
+            vm.isDropdownOpen = false;
+            vm.difficulties = [3, 4, 5];
+            vm.difficulty = 3;
+
+            vm.block = {
+                number: 1,
+                nonce: 0,
+                data: '',
+                prev: '0000000000000000000000000000000000000000000000000000000000000000',
+                hash: ''
+            };
+
+            vm.setDifficulty = function(difficulty) {
+                vm.difficulty = difficulty;
                 vm.isDropdownOpen = false;
-                vm.difficulties = [3, 4, 5];
-                vm.difficulty = 3;
+            };
 
-                vm.block = {
-                    number: 1,
-                    nonce: 0,
-                    data: '',
-                    prev: '0000000000000000000000000000000000000000000000000000000000000000',
-                    hash: ''
-                };
+            vm.toggleDropdown = function() {
+                vm.isDropdownOpen = !vm.isDropdownOpen;
+            };
 
-                vm.setDifficulty = function(difficulty) {
-                    vm.difficulty = difficulty;
-                    vm.isDropdownOpen = false;
-                };
+            vm.mineBlock = function() {
+                var startTime = performance.now();
+                var target = Array(vm.difficulty + 1).join("0");
+                vm.block.hash = CryptoJS.SHA256([vm.block.number, vm.block.nonce, vm.block.data, vm.block.prev].join('')).toString();
 
-                vm.toggleDropdown = function() {
-                    vm.isDropdownOpen = !vm.isDropdownOpen;
-                };
-
-                vm.mineBlock = function() {
-                    var startTime = performance.now();
-                    var target = Array(vm.difficulty + 1).join("0");
+                while (vm.block.hash.substring(0, vm.difficulty) !== target) {
+                    vm.block.nonce++;
                     vm.block.hash = CryptoJS.SHA256([vm.block.number, vm.block.nonce, vm.block.data, vm.block.prev].join('')).toString();
+                }
 
-                    while (vm.block.hash.substring(0, vm.difficulty) !== target) {
-                        vm.block.nonce++;
-                        vm.block.hash = CryptoJS.SHA256([vm.block.number, vm.block.nonce, vm.block.data, vm.block.prev].join('')).toString();
-                    }
-
-                    var endTime = performance.now();
-                    var timeTaken = (endTime - startTime) / 1000;
-                    var speed = Math.floor(vm.block.nonce / timeTaken);
-                    vm.miningResult = `Took ${timeTaken.toFixed(2)}s, Speed: ${speed} hashes/s`;
-                };
-            });
-    </script>
+                var endTime = performance.now();
+                var timeTaken = (endTime - startTime) / 1000;
+                var speed = Math.floor(vm.block.nonce / timeTaken);
+                vm.miningResult = `Took ${timeTaken.toFixed(2)}s, Speed: ${speed} hashes/s`;
+                $scope.$apply();
+            };
+        });
+</script>
 </body>
 </html>
