@@ -4,8 +4,8 @@
   "description": "hackindia 2024",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "build": "tailwindcss build styles.css -o output.css"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,5 +16,8 @@
     "grunt": "^1.6.1",
     "grunt-angular-templates": "^1.2.0",
     "grunt-cli": "^1.5.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.7"
   }
 }
