@@ -31,19 +31,26 @@ app.set('views', path.resolve(__dirname, 'views'));
 
 app.use('/users', userRoutes);
 
+app.get('/hash', (req, res) =>{
+    res.render('hash');
+})
+app.get('/block', (req, res) =>{
+    res.render('block');
+})
+
 app.get('/', (req, res) => {
     res.render('home');
 });
 
-app.get('/user/signin', (req, res) => {
-    res.render('sig/nin');
+app.get('/signin', (req, res) => {
+    res.render('signin');
 });
 
-app.get('/user/login', (req, res) => {
+app.get('/login', (req, res) => {
     res.render('login');
 });
 
-app.post('/user/signin', async (req, res) => {
+app.post('/signin', async (req, res) => {
     const { username, password } = req.body;
     console.log(req.body);
     try {
@@ -65,7 +72,7 @@ app.post('/user/signin', async (req, res) => {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 });
-app.post('/user/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
@@ -85,7 +92,7 @@ app.post('/user/login', async (req, res) => {
 });
 
 
-app.get('/user/wallet', async (req, res) => {
+app.get('/wallet', async (req, res) => {
     const { userId } = req.query;
 
     console.log('User ID:', userId);
@@ -107,12 +114,12 @@ app.get('/user/wallet', async (req, res) => {
     }
 });
 
-app.get('/user/wallet/generate', async (req, res) => {
+app.get('/wallet/generate', async (req, res) => {
     const { userId } = req.query;
     console.log(userId);
 
     if (!userId) {
-        return res.redirect('/user/wallet');
+        return res.redirect('/wallet');
     }
 
     try {
@@ -138,7 +145,7 @@ app.get('/user/wallet/generate', async (req, res) => {
         user.privateKey = encryptedPrivateKey;
         await user.save();
 
-        res.redirect(`/user/wallet?userId=${user._id}`);
+        res.redirect(`/wallet?userId=${user._id}`);
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }

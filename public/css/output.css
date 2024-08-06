@@ -605,6 +605,10 @@ video {
   margin-right: auto;
 }
 
+.mt-24 {
+  margin-top: 6rem;
+}
+
 .block {
   display: block;
 }
@@ -619,6 +623,10 @@ video {
 
 .grid {
   display: grid;
+}
+
+.hidden {
+  display: none;
 }
 
 .aspect-square {
@@ -655,6 +663,26 @@ video {
 
 .flex-1 {
   flex: 1 1 0%;
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 
 .flex-col {
@@ -723,9 +751,13 @@ video {
   padding-right: 2rem;
 }
 
-.py-12 {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .text-3xl {
@@ -769,6 +801,14 @@ video {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 .transition-colors {
@@ -817,9 +857,9 @@ video {
     padding-right: 1.5rem;
   }
 
-  .md\:py-24 {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+  .md\:py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   }
 
   .md\:text-5xl {
@@ -834,8 +874,17 @@ video {
 }
 
 @media (min-width: 1024px) {
+  .lg\:mx-0 {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
   .lg\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lg\:justify-start {
+    justify-content: flex-start;
   }
 
   .lg\:gap-12 {
@@ -847,9 +896,13 @@ video {
     padding-right: 1.5rem;
   }
 
-  .lg\:py-32 {
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+  .lg\:py-24 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .lg\:text-left {
+    text-align: left;
   }
 }
 
