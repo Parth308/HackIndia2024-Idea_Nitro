@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA256 Hash Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .popup {
+            display: none;
+            position: absolute;
+            background-color: #374151;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            z-index: 10;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .info:hover + .popup {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 min-h-screen p-8" ng-app="hashApp" ng-controller="HashController">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl font-bold mb-12 text-center text-indigo-400">SHA256 Hash Generator</h1>
+        
+        <div class="bg-gray-800 rounded-lg shadow-lg mb-8 p-4 relative">
+            <div class="info inline-block">
+                <button class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200">
+                    ℹ️ What is SHA256?
+                </button>
+            </div>
+            <div class="popup">
+                <p>SHA256 is a cryptographic hash function that generates a fixed-size 256-bit (32-byte) hash. Key features:</p>
+                <ul class="list-disc list-inside mt-2">
+                    <li>Fixed output length</li>
+                    <li>Deterministic</li>
+                    <li>Quick computation</li>
+                    <li>Avalanche effect</li>
+                    <li>Preimage resistance</li>
+                </ul>
+                <p class="mt-2">Used in various security applications and protocols, including Bitcoin's blockchain technology.</p>
+            </div>
+        </div>
+        
+        <div class="bg-gray-800 rounded-lg shadow-lg p-8">
+            <div class="mb-8 relative">
+                <label for="data" class="block text-lg font-medium mb-2">Input:</label>
+                <p class="text-sm text-gray-400 mb-2">Type or paste your text here to generate its SHA256 hash</p>
+                <textarea id="data" rows="6" ng-model="inputText" ng-change="updateHash()" class="w-full bg-gray-700 text-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"></textarea>
+            </div>
+            <div class="relative">
+                <label for="hash" class="block text-lg font-medium mb-2">Hash:</label>
+                <p class="text-sm text-gray-400 mb-2">The generated SHA256 hash will appear here</p>
+                <input id="hash" type="text" ng-model="hashOutput" readonly class="w-full bg-gray-700 text-blue-400 rounded-lg p-4 focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono transition-all duration-300">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = angular.module('hashApp', []);
+
+        app.controller('HashController', function($scope) {
+            $scope.inputText = '';
+            $scope.hashOutput = '';
+
+            $scope.updateHash = function() {
+                $scope.hashOutput = sha256($scope.inputText);
+            };
+
+            // SHA256 implementation
+            function sha256(ascii) {
+                function rightRotate(value, amount) {
+                    return (value >>> amount) | (value << (32 - amount));
+                }
+
+                var mathPow = Math.pow;
+                var maxWord = mathPow(2, 32);
+                var lengthProperty = 'length';
+                var i, j;
+                var result = '';
+
+                var words = [];
+                var asciiBitLength = ascii[lengthProperty] * 8;
+
+                var hash = sha256.h = sha256.h || [];
+                var k = sha256.k = sha256.k || [];
+                var primeCounter = k[lengthProperty];
+
+                var isComposite = {};
+                for (var candidate = 2; primeCounter < 64; candidate++) {
+                    if (!isComposite[candidate]) {
+                        for (i = 0; i < 313; i += candidate) {
+                            isComposite[i] = candidate;
+                        }
+                        hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                        k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                    }
+                }
+
+                ascii += '\x80';
+                while (ascii[lengthProperty] % 64 - 56) ascii += '\x00';
+                for (i = 0; i < ascii[lengthProperty]; i++) {
+                    j = ascii.charCodeAt(i);
+                    if (j >> 8) return;
+                    words[i >> 2] |= j << ((3 - i) % 4) * 8;
+                }
+                words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+                words[words[lengthProperty]] = (asciiBitLength);
+
+                for (j = 0; j < words[lengthProperty];) {
+                    var w = words.slice(j, j += 16);
+                    var oldHash = hash;
+                    hash = hash.slice(0, 8);
+
+                    for (i = 0; i < 64; i++) {
+                        var i2 = i + j;
+                        var w15 = w[i - 15], w2 = w[i - 2];
+
+                        var a = hash[0], e = hash[4];
+                        var temp1 = hash[7]
+                            + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                            + ((e & hash[5]) ^ ((~e) & hash[6]))
+                            + k[i]
+                            + (w[i] = (i < 16) ? w[i] : (
+                                w[i - 16]
+                                + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                                + w[i - 7]
+                                + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                            ) | 0
+                            );
+                        var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                            + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+
+                        hash = [(temp1 + temp2) | 0].concat(hash);
+                        hash[4] = (hash[4] + temp1) | 0;
+                    }
+
+                    for (i = 0; i < 8; i++) {
+                        hash[i] = (hash[i] + oldHash[i]) | 0;
+                    }
+                }
+
+                for (i = 0; i < 8; i++) {
+                    for (j = 3; j + 1; j--) {
+                        var b = (hash[i] >> (j * 8)) & 255;
+                        result += ((b < 16) ? 0 : '') + b.toString(16);
+                    }
+                }
+                return result;
+            }
+        });
+    </script>
+</body>
+</html>
