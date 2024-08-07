@@ -1,26 +1,68 @@
 <%- include('base',{content: `
     <section class="w-full py-8 md:py-16 lg:py-24 bg-black text-white">
-    <div class="container px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12">
-        <div class="space-y-4 flex flex-col justify-center text-center lg:text-left lg:justify-start mt-24">
-            <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl">
-                Understand Blockchain with Practical Demos
-            </h1>
-            <p class="max-w-[600px] text-white md:text-xl mx-auto lg:mx-0">
-                Explore the core concepts of blockchain technology through interactive demos on hashing, block creation, and token/coin management. Gain hands-on experience and deepen your understanding of this transformative technology.
-            </p>
-            <div class="flex gap-4 justify-center lg:justify-start">
-                <a href="#" class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors animate-color-reverse button-bounce">
-                    Try the Demos
-                </a>
-                <a href="#" class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-black px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50">
-                    Learn More
-                </a>
+        <div class="container px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12">
+            <div class="space-y-4 flex flex-col justify-center text-center lg:text-left lg:justify-start mt-24">
+                <h1 class="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl xl:text-6xl leading-tight">
+                    <div class="typing-wrapper">
+                        <div class="typing-container">
+                            <div class="typing-animation">
+                                <span class="typing-text">Understand Blockchain</span>
+                                <span class="typing-text">with Practical Demos</span>
+                            </div>
+                        </div>
+                    </div>
+                </h1>
+                <p class="max-w-[600px] text-white md:text-xl lg:text-2xl lg:leading-relaxed mx-auto lg:mx-0">
+                    Explore the core concepts of blockchain technology through interactive demos on hashing, block creation, and token/coin management. Gain hands-on experience and deepen your understanding of this transformative technology.
+                </p>
+                <div class="flex gap-4 justify-center lg:justify-start">
+                    <a href="" class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors animate-color-reverse button-bounce">
+                        Learn More
+                    </a>
+                    <a href="/about" class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-black px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-white hover:text-black">
+                        About Us
+                    </a>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <img src="/images/home.gif" width="550" height="550" alt="Blockchain" class="mx-auto aspect-square overflow-hidden rounded-xl object-cover"/>
             </div>
         </div>
-        <div class="flex justify-center">
-            <img src="/images/home.gif" width="550" height="550" alt="Blockchain" class="mx-auto aspect-square overflow-hidden rounded-xl object-cover"/>
-        </div>
-    </div>
-</section>
-`}) %>
+    </section>
+    <style>
+    @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+    }
 
+    .typing-wrapper {
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .typing-container {
+        display: block;
+    }
+
+    .typing-animation {
+        display: inline-block;
+        overflow: hidden;
+    }
+
+    .typing-text {
+        display: block;
+        overflow: hidden; /* Ensures text stays within bounds */
+        white-space: nowrap; /* Keeps text on a single line */
+        animation: typing 2s steps(30, end) forwards; /* Typing animation for each line */
+    }
+
+    .typing-text:nth-of-type(1) {
+        animation-delay: 0s; /* First line starts immediately */
+    }
+
+    .typing-text:nth-of-type(2) {
+        animation-delay: 2s; /* Second line starts after 2 seconds */
+    }
+</style>
+`}) %>

@@ -1,8 +1,8 @@
 <%- include('base', {content: `
-    <div id="blockchain-content" class="fade-in bg-black min-h-screen">
+    <div id="blockchain-content" class="fade-in content-animation bg-black min-h-screen">
         <div class="container mx-auto px-4 py-8 max-w-7xl">
             <h2 class="text-3xl font-bold mb-4 text-center text-white">Blockchain Tutorial</h2>
-            <div class="bg-gray-800 p-6 rounded-lg mb-8 text-center">
+            <div class="bg-gray-800 p-6 rounded-lg mb-8 text-center content-animation">
                 <h4 class="text-xl text-white font-semibold mb-2 flex items-center justify-center">
                     Explanation
                     <span class="info-tooltip ml-2">
@@ -17,7 +17,7 @@
                 </p>
             </div>
         
-            <div id="blockchain" class="flex flex-nowrap overflow-x-auto space-x-4 pb-4"></div>
+            <div id="blockchain" class="flex flex-nowrap overflow-x-auto space-x-4 pb-4 content-animation"></div>
         </div>
     </div>
     
@@ -75,7 +75,7 @@
                 this.chain.forEach((block, index) => {
                     const blockElement = document.createElement('div');
                     blockElement.id = \`block-\${block.number}\`;
-                    blockElement.className = \`flex-shrink-0 p-4 rounded-lg w-64 text-black bg-blue-200\`;
+                    blockElement.className = \`flex-shrink-0 p-4 rounded-lg w-64 text-black bg-blue-200 content-animation\`;
                     blockElement.innerHTML = \`
                         <div class="mb-2">
                             <span class="font-bold">Block:</span>
@@ -131,8 +131,21 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
         .fade-in {
             animation: fadeIn 0.5s ease-in;
+        }
+        .content-animation {
+            animation: fadeInUp 1s ease-in-out;
         }
         .info-tooltip {
             position: relative;
@@ -160,4 +173,3 @@
         }
     </style>
 `}) %>
-`}) %>  

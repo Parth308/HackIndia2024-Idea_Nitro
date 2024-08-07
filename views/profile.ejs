@@ -41,6 +41,7 @@
         .detail-item {
             margin-bottom: 1.5rem; /* Space between detail items */
         }
+        
     </style>
 </head>
 <body class="bg-black text-white">
@@ -55,31 +56,32 @@
         </a>
         <nav class="flex gap-4 sm:gap-6">
             <% if (currentPage === 'hash') { %>
-                <a class="nav-button" href="/">Home</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-white text-black hover:bg-black hover:text-white" href="/">Home</a>
             <% } else { %>
-                <a class="nav-button" href="/hash">Hash</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/hash">Hash</a>
             <% } %>
-            
+        
             <% if (currentPage === 'block') { %>
-                <a class="nav-button" href="/">Home</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-white text-black hover:bg-black hover:text-white" href="/">Home</a>
             <% } else { %>
-                <a class="nav-button" href="/block">Block</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/block">Block</a>
             <% } %>
-            
+        
             <% if (currentPage === 'blockchain') { %>
-                <a class="nav-button" href="/">Home</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-white text-black hover:bg-black hover:text-white" href="/">Home</a>
             <% } else { %>
-                <a class="nav-button" href="/blockchain">Blockchain</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/blockchain">Blockchain</a>
             <% } %>
-            
+        
             <% if (locals.user) { %>
-                <a class="nav-button" href="/profile?id=<%= user._id %>">User</a>
-                <a class="nav-button" href="/logout">Logout</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/profile?id=<%= user._id %>">User</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/logout">Logout</a>
             <% } else { %>
-                <a class="nav-button" href="/login">Login</a>
-                <a class="nav-button" href="/signin">Sign In</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/login">Login</a>
+                <a class="nav-button px-4 py-2 rounded-md transition-colors duration-300 bg-black text-white hover:bg-white hover:text-black" href="/signin">Sign In</a>
             <% } %>
         </nav>
+        
     </header>
     
     <!-- Main Content -->
