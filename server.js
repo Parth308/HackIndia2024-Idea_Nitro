@@ -216,7 +216,9 @@ app.get('/wallet/generate', async (req, res) => {
         user_.publicKey= wallet.publicKey;
         await user_.save();
 
-        res.render('profile', {user:user_}); 
+        res.render('profile', {user:user_,
+            currentPage: 'profile'
+        }); 
 
     } catch (err) {
         console.error('Error generating wallet:', err.message);
@@ -247,6 +249,13 @@ app.post('/comments', async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
+
+app.get('/about',(req, res)=>{
+    res.render('about',{
+        user: req.user,
+        currentPage:'about',
+    });
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
