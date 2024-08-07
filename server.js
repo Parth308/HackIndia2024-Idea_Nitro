@@ -110,7 +110,9 @@ app.get('/blockchain', trackVisits, async (req, res) => {
         });
     }
 });
-
+app.get('/community' , (req,res) => {
+    res.render('comment');
+})
 app.get('/', (req, res) => {
     res.render('home',{
         currentPage: 'home',

@@ -1,0 +1,33 @@
+<%- include('base', { content: `
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl mb-6">Comments</h2>
+            <div class="space-y-6 mb-8">
+                <% if (comments && comments.length > 0) { %>
+                    <% comments.forEach(function(comment) { %>
+                        <div class="p-4 bg-gray-800 rounded-md">
+                            <h4 class="text-lg font-semibold"><%= comment.username %></h4>
+                            <p class="text-sm"><%= comment.comment %></p>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-center">No comments yet.</p>
+                <% } %>
+            </div>
+            <div>
+                <form action="/comments" method="POST" class="space-y-4">
+                    <input type="hidden" name="page" value="hash">
+                    <div class="grid gap-4">
+                        <label class="text-sm font-medium" for="username">Username</label>
+                        <input type="text" id="username" name="username" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your username">
+                    </div>
+                    <div class="grid gap-4">
+                        <label class="text-sm font-medium" for="comment">Comment</label>
+                        <textarea id="comment" name="comment" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your comment" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit Comment</button>
+                </form>
+            </div>
+        </div>
+    </section>
+` }) %>
