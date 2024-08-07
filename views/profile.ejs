@@ -53,11 +53,32 @@
             </svg>
             <span class="ml-2 text-xl font-semibold">LearnBlock</span>
         </a>
-        <nav class="flex gap-4">
-            <a class="text-sm font-medium hover:underline text-white" href="/">Home</a>
-            <a class="text-sm font-medium hover:underline text-white" href="/hash">Hashing</a>
-            <a class="text-sm font-medium hover:underline text-white" href="/block">Blockchain</a>
-            <a class="text-sm font-medium hover:underline underline-offset-4" href="/logout">Logout</a> 
+        <nav class="flex gap-4 sm:gap-6">
+            <% if (currentPage === 'hash') { %>
+                <a class="nav-button" href="/">Home</a>
+            <% } else { %>
+                <a class="nav-button" href="/hash">Hash</a>
+            <% } %>
+            
+            <% if (currentPage === 'block') { %>
+                <a class="nav-button" href="/">Home</a>
+            <% } else { %>
+                <a class="nav-button" href="/block">Block</a>
+            <% } %>
+            
+            <% if (currentPage === 'blockchain') { %>
+                <a class="nav-button" href="/">Home</a>
+            <% } else { %>
+                <a class="nav-button" href="/blockchain">Blockchain</a>
+            <% } %>
+            
+            <% if (locals.user) { %>
+                <a class="nav-button" href="/profile?id=<%= user._id %>">User</a>
+                <a class="nav-button" href="/logout">Logout</a>
+            <% } else { %>
+                <a class="nav-button" href="/login">Login</a>
+                <a class="nav-button" href="/signin">Sign In</a>
+            <% } %>
         </nav>
     </header>
     
@@ -130,11 +151,6 @@
             </div>
         </div>
     </main>
-    
-    <!-- Footer -->
-    <footer class="bg-black text-gray-400 py-4 text-center">
-        <p>&copy; 2024 Blockchain Demo. All rights reserved.</p>
-    </footer>
 </div>
 
 <script>

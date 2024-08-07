@@ -10,7 +10,7 @@
       <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
       <style>
-          body {
+          .content-animation {
               animation: fadeIn 1s ease-in-out;
           }
           @keyframes fadeIn {
@@ -31,12 +31,12 @@
   </head>
   <body ng-controller="BlockController as vm" class="bg-black text-white">
   <div class="flex flex-col min-h-[100dvh] p-4 lg:p-6">
-    <main class="flex-1">
+    <main class="flex-1 content-animation">
       <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
         <div class="container px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12">
           <div class="space-y-4">
             <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl ml-5">
-              Block
+              Block Tutorial
             </h1>
             <div class="grid gap-6 bg-black/20 p-6 rounded-lg">
               <div class="space-y-4 relative">
@@ -153,7 +153,7 @@
                   Time Taken: {{ vm.timeTaken | number:2 }} seconds
                   <br>
                   Speed: {{ vm.speed | number:2 }} blocks/second
-              </div>
+                </div>
                 <span class="text-sm" ng-show="vm.mining">Mining in progress...</span>
               </div>
             </div>
@@ -181,8 +181,8 @@
     
     vm.blocks = [];
     vm.mining = false;
-    // Inside your AngularJS controller
-  vm.mineBlock = function() {
+    
+    vm.mineBlock = function() {
       vm.mining = true;
       var difficultyString = '0'.repeat(vm.difficulty);
       var startTime = new Date().getTime();
@@ -207,8 +207,7 @@
       // Update scope variables for display
       vm.timeTaken = timeTaken;
       vm.speed = speed;
-  };
-
+    };
   });
   </script>
   </body>

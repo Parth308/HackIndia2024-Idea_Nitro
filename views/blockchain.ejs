@@ -1,40 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain Tutorial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        body {
-            animation: fadeIn 0.5s ease-in;
-        }
-    </style>
-</head>
-<body class="bg-gray-900 text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Blockchain Tutorial</h1>
+<%- include('base', {content: `
+    <div id="blockchain-content" class="fade-in bg-black min-h-screen">
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <h2 class="text-3xl font-bold mb-4 text-center text-white">Blockchain Tutorial</h2>
+            <div class="bg-gray-800 p-6 rounded-lg mb-8 text-center">
+                <h4 class="text-xl text-white font-semibold mb-2 flex items-center justify-center">
+                    Explanation
+                    <span class="info-tooltip ml-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
+                        <span class="info-text">Click on the 'Mine' button to generate a new hash for the block. Change the data in a block to see how it affects the chain.</span>
+                    </span>
+                </h4>
+                <p class="text-gray-300">
+                    This tutorial demonstrates the basic concept of blockchain technology. A blockchain consists of a series of blocks, each containing data, a nonce, and the hash of the previous block. If you modify the data of any block, it affects the entire chain, demonstrating the importance of immutability in blockchain.
+                </p>
+            </div>
         
-        <div class="bg-gray-800 p-4 rounded-lg mb-8">
-            <h4 class="text-xl font-semibold mb-2">Explanation</h4>
-            <p class="text-gray-300">
-                Now we start chaining blocks together. Every block (except for the first) has the hash of its predecessor in the "Prev" field. If you change one block, it will invalidate that block and all subsequent blocks.
-            </p>
+            <div id="blockchain" class="flex flex-nowrap overflow-x-auto space-x-4 pb-4"></div>
         </div>
-
-        <div id="blockchain" class="flex overflow-x-auto space-x-4 pb-4"></div>
     </div>
-
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script>
         function generateRandomNonce() {
             return Math.floor(Math.random() * 100001);
         }
-
+    
         class Block {
             constructor(number, data, prev = '') {
                 this.number = number;
@@ -44,19 +36,19 @@
                 this.hash = this.calculateHash();
                 this.mined = false;
             }
-
+    
             calculateHash() {
                 const blockString = this.number + this.nonce + this.data + this.prev;
                 return CryptoJS.SHA256(blockString).toString();
             }
-
+    
             mine() {
                 this.nonce = generateRandomNonce();
                 this.hash = this.calculateHash();
                 this.mined = true;
             }
         }
-
+    
         class Blockchain {
             constructor() {
                 this.chain = [
@@ -69,84 +61,103 @@
                 this.updateChain();
                 this.renderChain();
             }
-
+    
             updateChain() {
                 for (let i = 1; i < this.chain.length; i++) {
                     this.chain[i].prev = this.chain[i-1].hash;
                     this.chain[i].hash = this.chain[i].calculateHash();
                 }
             }
-
+    
             renderChain() {
                 const blockchainDiv = document.getElementById('blockchain');
                 blockchainDiv.innerHTML = '';
                 this.chain.forEach((block, index) => {
                     const blockElement = document.createElement('div');
-                    blockElement.id = `block-${block.number}`;
-                    blockElement.className = `flex-shrink-0 p-4 rounded-lg w-64 text-black ${block.mined ? 'bg-green-100' : 'bg-red-100'}`;
-                    blockElement.innerHTML = `
+                    blockElement.id = \`block-\${block.number}\`;
+                    blockElement.className = \`flex-shrink-0 p-4 rounded-lg w-64 text-black bg-blue-200\`;
+                    blockElement.innerHTML = \`
                         <div class="mb-2">
                             <span class="font-bold">Block:</span>
-                            <input type="text" value="#${block.number}" readonly class="w-full bg-gray-200 rounded px-2">
+                            <input type="text" value="#\${block.number}" readonly class="w-full bg-gray-300 rounded px-2">
                         </div>
                         <div class="mb-2">
                             <span class="font-bold">Nonce:</span>
-                            <input type="text" value="${block.nonce}" readonly class="w-full bg-gray-200 rounded px-2">
+                            <input type="text" value="\${block.nonce}" readonly class="w-full bg-gray-300 rounded px-2">
                         </div>
                         <div class="mb-2">
                             <span class="font-bold">Data:</span>
-                            <input type="text" value="${block.data}" class="w-full rounded px-2" onchange="updateBlockData(${index}, this.value)">
+                            <input type="text" value="\${block.data}" class="w-full rounded px-2" onchange="updateBlockData(\${index}, this.value)">
                         </div>
                         <div class="mb-2 break-all">
                             <span class="font-bold">Prev:</span>
-                            <input type="text" value="${block.prev.substring(0, 20)}..." readonly class="w-full bg-gray-200 rounded px-2">
+                            <input type="text" value="\${block.prev.substring(0, 20)}..." readonly class="w-full bg-gray-300 rounded px-2">
                         </div>
                         <div class="mb-2 break-all">
                             <span class="font-bold">Hash:</span>
-                            <input type="text" value="${block.hash.substring(0, 20)}..." readonly class="w-full bg-gray-200 rounded px-2">
+                            <input type="text" value="\${block.hash.substring(0, 20)}..." readonly class="w-full bg-gray-300 rounded px-2">
                         </div>
-                        <button onclick="mineBlock(${index})" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded w-full">
-                            Mine
-                        </button>
-                    `;
+                        <button onclick="mineBlock(\${index})" class="bg-green-500 text-white px-4 py-2 rounded w-full mt-2">Mine</button>
+                    \`;
                     blockchainDiv.appendChild(blockElement);
                 });
             }
-
-            updateBlockData(index, newData) {
-                this.chain[index].data = newData;
-                this.chain[index].hash = this.chain[index].calculateHash();
-                this.chain[index].mined = false;
-                this.updateSubsequentBlocks(index + 1);
-                this.renderChain();
-            }
-
-            updateSubsequentBlocks(startIndex) {
-                for (let i = startIndex; i < this.chain.length; i++) {
-                    this.chain[i].prev = this.chain[i-1].hash;
-                    this.chain[i].hash = this.chain[i].calculateHash();
-                    this.chain[i].mined = false;
-                }
-            }
-
-            mineBlock(index) {
-                if (!this.chain[index].mined) { // Only mine if not mined
-                    this.chain[index].mine();
-                    this.updateSubsequentBlocks(index + 1);
-                    this.renderChain(); // Re-render the entire chain after mining to ensure proper state.
-                }
-            }
         }
-
-        const blockchain = new Blockchain();
-
-        function updateBlockData(index, newData) {
-            blockchain.updateBlockData(index, newData);
+    
+        function updateBlockData(index, data) {
+            blockchain.chain[index].data = data;
+            blockchain.updateChain();
+            blockchain.renderChain();
         }
-
+    
         function mineBlock(index) {
-            blockchain.mineBlock(index);
+            blockchain.chain[index].mine();
+            blockchain.updateChain();
+            blockchain.renderChain();
         }
+    
+        const blockchain = new Blockchain();
     </script>
-</body>
-</html>
+    
+    <style>
+        html, body {
+            min-height: 100vh;
+            margin: 0;
+        }
+        #blockchain-content {
+            min-height: 100vh; /* Ensure full height of viewport */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .info-tooltip .info-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .info-tooltip:hover .info-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+`}) %>
+`}) %>  
