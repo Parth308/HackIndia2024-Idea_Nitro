@@ -54,3 +54,5 @@ Our project aims to demonstrate the practical application of blockchain technolo
 - **AngularJS**: For frontend logic and blockchain implementation.
 - **HTML/CSS**: For frontend design and user interaction.
 
+### Deployed project:
+https://cf94-2409-40d2-33-8ddb-75ad-d9a8-816-452a.ngrok-free.app/
