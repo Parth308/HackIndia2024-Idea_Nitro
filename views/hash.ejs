@@ -1,4 +1,140 @@
+<<<<<<< HEAD
+<%- include('base', { content: ` 
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white" ng-app="hashApp" ng-controller="HashController">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8 grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+            <div class="space-y-4 animate-fadeIn">
+                <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl ml-6">
+                    Hashing Tutorial
+                </h1>
+                <div class="grid gap-4 bg-muted/20 p-6 rounded-lg">
+                    <div class="space-y-4">
+                        <p class="text-muted-foreground">
+                            Hashing is the process of converting a piece of data into a fixed-size output, called a hash value
+                            or hash. This hash value is unique to the input data and can be used to verify the integrity of the
+                            data.
+                        </p>
+                    </div>
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium" for="input">
+                            Input
+                        </label>
+                        <textarea class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-black" id="input" placeholder="Enter your input" rows="3" ng-model="inputText" ng-change="updateHash()"></textarea>
+                    </div>
+                    <div class="grid gap-2">
+                        <label class="text-sm font-medium text-black" for="output">
+                            Output
+                        </label>
+                        <input class="flex text-black h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" id="output" placeholder="Hash output" readonly="" type="text" ng-model="hashOutput" />
+                    </div>
+                </div>
+            </div>
+            <div class="bg-muted/20 p-6 rounded-lg flex items-center justify-center">
+                <div class="text-center space-y-4">
+                    <img src="" alt="Blockchain Image" class="rounded-lg max-w-full w-50 h-50"/>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
+        <div class="container mx-auto px-4 md:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl mb-6">Comments</h2>
+            <div class="mb-8">
+                <form action="/comments" method="POST" class="space-y-4">
+                    <input type="hidden" name="page" value="hash">
+                    <div class="grid gap-4">
+                        <label class="text-sm font-medium" for="username">Username</label>
+                        <input type="text" id="username" name="username" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your username">
+                    </div>
+                    <div class="grid gap-4">
+                        <label class="text-sm font-medium" for="comment">Comment</label>
+                        <textarea id="comment" name="comment" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your comment" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit Comment</button>
+                </form>
+            </div>
+            <div class="space-y-6">
+
+            </div>
+        </div>
+    </section>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script>
+        var app = angular.module('hashApp', []);
+        app.controller('HashController', function($scope) {
+            $scope.inputText = '';
+            $scope.hashOutput = '';
+            $scope.updateHash = function() {
+                $scope.hashOutput = sha256($scope.inputText);
+            };
+            function sha256(ascii) {
+                function rightRotate(value, amount) {
+                    return (value >>> amount) | (value << (32 - amount));
+                }
+                var mathPow = Math.pow;
+                var maxWord = mathPow(2, 32);
+                var lengthProperty = 'length';
+                var i, j;
+                var result = '';
+                var words = [];
+                var asciiBitLength = ascii[lengthProperty] * 8;
+                var hash = sha256.h = sha256.h || [];
+                var k = sha256.k = sha256.k || [];
+                var primeCounter = k[lengthProperty];
+                var isComposite = {};
+                for (var candidate = 2; primeCounter < 64; candidate++) {
+                    if (!isComposite[candidate]) {
+                        for (i = 0; i < 313; i += candidate) {
+                            isComposite[i] = candidate;
+                        }
+                        hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                        k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                    }
+                }
+                ascii += '\\x80';
+                while (ascii[lengthProperty] % 64 - 56) ascii += '\\x00';
+                for (i = 0; i < ascii[lengthProperty]; i++) {
+                    j = ascii.charCodeAt(i);
+                    if (j >> 8) return;
+                    words[i >> 2] |= j << ((3 - i) % 4) * 8;
+                }
+                words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+                words[words[lengthProperty]] = (asciiBitLength);
+                for (j = 0; j < words[lengthProperty];) {
+                    var w = words.slice(j, j += 16);
+                    var oldHash = hash;
+                    hash = hash.slice(0, 8);
+                    for (i = 0; i < 64; i++) {
+                        var i2 = i + j;
+                        var w15 = w[i - 15], w2 = w[i - 2];
+                        var a = hash[0], e = hash[4];
+                        var temp1 = hash[7]
+                            + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                            + ((e & hash[5]) ^ ((~e) & hash[6]))
+                            + k[i]
+                            + (w[i] = (i < 16) ? w[i] : (
+                                w[i - 16]
+                                + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                                + w[i - 7]
+                                + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                            ) | 0);
+                        var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                            + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+                        hash = [(temp1 + temp2) | 0].concat(hash);
+                        hash[4] = (hash[4] + temp1) | 0;
+                    }
+                    for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+                }
+                for (i = 0; i < 8; i++) {
+                    result += ('00000000' + hash[i].toString(16)).slice(-8);
+                }
+                return result;
+            }
+        });
+    </script>
+` }) %>
+=======
 <%- include('base', { content: `
+<<<<<<< HEAD
     <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white fade-in" ng-app="hashApp" ng-controller="HashController">
         <div class="container mx-auto px-4 md:px-6 lg:px-8 grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
             <div class="space-y-4 animate-fadeIn">
@@ -167,3 +303,157 @@
     </style>
     `}) %>
     
+=======
+      <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white" ng-app="hashApp" ng-controller="HashController">
+      <div class="container mx-auto px-4 md:px-6 lg:px-8 grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
+          <div class="space-y-4 animate-fadeIn">
+              <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl ml-6">
+                  Hashing Tutorial
+              </h1>
+              <div class="grid gap-4 bg-muted/20 p-6 rounded-lg">
+                  <div class="space-y-4">
+                      <p class="text-muted-foreground">
+                          Hashing is the process of converting a piece of data into a fixed-size output, called a hash value
+                          or hash. This hash value is unique to the input data and can be used to verify the integrity of the
+                          data.
+                      </p>
+                  </div>
+                  <div class="grid gap-2">
+                      <label class="text-sm font-medium" for="input">
+                          Input
+                      </label>
+                      <textarea class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-black" id="input" placeholder="Enter your input" rows="3" ng-model="inputText" ng-change="updateHash()"></textarea>
+                  </div>
+                  <div class="grid gap-2">
+                      <label class="text-sm font-medium text-black" for="output">
+                          Output
+                      </label>
+                      <input class="flex text-black h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" id="output" placeholder="Hash output" readonly="" type="text" ng-model="hashOutput" />
+                  </div>
+              </div>
+          </div>
+          <div class="bg-muted/20 p-6 rounded-lg flex items-center justify-center">
+              <div class="text-center space-y-4">
+                  <img src="/images/hash.png" alt="Blockchain Image" class="rounded-lg max-w-full w-50 h-50"/>
+              </div>
+          </div>
+      </div>
+  </section>
+      <section class="w-full py-12 md:py-24 lg:py-32 bg-black text-white">
+          <div class="container mx-auto px-4 md:px-6 lg:px-8">
+              <h2 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-6xl mb-6">Comments</h2>
+      
+              <div class="mb-8">
+                  <form action="/comments" method="POST" class="space-y-4">
+                      <input type="hidden" name="page" value="hash">
+                      <div class="grid gap-4">
+                          <label class="text-sm font-medium" for="username">Username</label>
+                          <input type="text" id="username" name="username" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your username">
+                      </div>
+                      <div class="grid gap-4">
+                          <label class="text-sm font-medium" for="comment">Comment</label>
+                          <textarea id="comment" name="comment" class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-black placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" placeholder="Enter your comment" rows="4"></textarea>
+                      </div>
+                      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit Comment</button>
+                  </form>
+              </div>
+              
+              <div class="space-y-6">
+                  
+              </div>
+          </div>
+      </section>
+      
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+      <script>
+          var app = angular.module('hashApp', []);
+      
+          app.controller('HashController', function($scope) {
+              $scope.inputText = '';
+              $scope.hashOutput = '';
+      
+              $scope.updateHash = function() {
+                  $scope.hashOutput = sha256($scope.inputText);
+              };
+      
+              function sha256(ascii) {
+                  function rightRotate(value, amount) {
+                      return (value >>> amount) | (value << (32 - amount));
+                  }
+      
+                  var mathPow = Math.pow;
+                  var maxWord = mathPow(2, 32);
+                  var lengthProperty = 'length';
+                  var i, j;
+                  var result = '';
+      
+                  var words = [];
+                  var asciiBitLength = ascii[lengthProperty] * 8;
+      
+                  var hash = sha256.h = sha256.h || [];
+                  var k = sha256.k = sha256.k || [];
+                  var primeCounter = k[lengthProperty];
+      
+                  var isComposite = {};
+                  for (var candidate = 2; primeCounter < 64; candidate++) {
+                      if (!isComposite[candidate]) {
+                          for (i = 0; i < 313; i += candidate) {
+                              isComposite[i] = candidate;
+                          }
+                          hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+                          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+                      }
+                  }
+      
+                  ascii += '\\x80';
+                  while (ascii[lengthProperty] % 64 - 56) ascii += '\\x00';
+                  for (i = 0; i < ascii[lengthProperty]; i++) {
+                      j = ascii.charCodeAt(i);
+                      if (j >> 8) return;
+                      words[i >> 2] |= j << ((3 - i) % 4) * 8;
+                  }
+                  words[words[lengthProperty]] = ((asciiBitLength / maxWord) | 0);
+                  words[words[lengthProperty]] = (asciiBitLength);
+      
+                  for (j = 0; j < words[lengthProperty];) {
+                      var w = words.slice(j, j += 16);
+                      var oldHash = hash;
+                      hash = hash.slice(0, 8);
+      
+                      for (i = 0; i < 64; i++) {
+                          var i2 = i + j;
+                          var w15 = w[i - 15], w2 = w[i - 2];
+      
+                          var a = hash[0], e = hash[4];
+                          var temp1 = hash[7]
+                              + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+                              + ((e & hash[5]) ^ ((~e) & hash[6]))
+                              + k[i]
+                              + (w[i] = (i < 16) ? w[i] : (
+                                  w[i - 16]
+                                  + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+                                  + w[i - 7]
+                                  + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))
+                              ) | 0);
+                          var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+                              + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+      
+                          hash = [(temp1 + temp2) | 0].concat(hash);
+                          hash[4] = (hash[4] + temp1) | 0;
+                      }
+      
+                      for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+                  }
+      
+                  for (i = 0; i < 8; i++) {
+                      result += ('00000000' + hash[i].toString(16)).slice(-8);
+                  }
+      
+                  return result;
+              }
+          });
+      </script>
+      `}); 
+%>
+>>>>>>> 47e6a568f3a5c1c195093fc93d3844f52e5a1ba7
+>>>>>>> de1e658cbc2d14ddbc986c9039da37e731a30e08
