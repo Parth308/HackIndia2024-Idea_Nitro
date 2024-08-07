@@ -4,6 +4,7 @@ import userRoutes from './src/routes/userRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import User from './src/models/userModel.js';
+import Comment from './src/models/comment.js'; 
 import { ethers } from 'ethers';
 import cookieParser from 'cookie-parser';
 import { validateToken } from './src/services/auth.js';
@@ -55,37 +56,78 @@ app.set('views', path.resolve(__dirname, 'views'));
 
 app.use('/users', userRoutes);
 
+app.get('/hash',trackVisits, async (req, res) =>{
+    try {
+        const comments = await Comment.find({ page: 'hash' }).populate('userId', 'username');
+        res.render('hash', {
+            user: req.user,
+            currentPage: 'hash',
+            comments
+        });
+    } catch (error) {
+        console.error('Error fetching comments:', error.message);
+        res.render('hash', {
+            currentPage: 'hash',
+            user: req.user,
+            comments: []
+        });
+    }
+});
 
-app.get('/hash',trackVisits, (req, res) =>{
-    res.render('hash',{
-        user: req.user
-    });
-})
-app.get('/block',trackVisits, (req, res) =>{
-    res.render('block',{
-        user: req.user
-    });
-})
+app.get('/block', trackVisits, async (req, res) => {
+    try {
+        const comments = await Comment.find({ page: 'block' }).populate('userId', 'username');
+        console.log(comments);
+        res.render('block', {
+            user: req.user,
+            currentPage: 'block',
+            comments
+        });
+    } catch (error) {
+        console.error('Error fetching comments:', error.message);
+        res.render('block', {
+            user: req.user,
+            currentPage: 'block',
+            comments: []
+        });
+    }
+});
 
-
-app.get('/blockchain',trackVisits, (req, res) =>{
-    res.render('blockchain');
-})
+app.get('/blockchain', trackVisits, async (req, res) => {
+    try {
+        const comments = await Comment.find({ page: 'blockchain' }).populate('userId', 'username');
+        res.render('blockchain', {
+            user: req.user,
+            currentPage: 'blockchain',
+            comments
+        });
+    } catch (error) {
+        console.error('Error fetching comments:', error.message);
+        res.render('blockchain', {
+            user: req.user,
+            currentPage: 'blockchain',
+            comments: []
+        });
+    }
+});
 
 app.get('/', (req, res) => {
     res.render('home',{
+        currentPage: 'home',
         user: req.user
     });
 });
 
 app.get('/signin', (req, res) => {
     res.render('signin',{
+        currentPage: 'signin',
         user: req.user
     });
 });
 
 app.get('/login', (req, res) => {
     res.render('login',{
+        currentPage: 'login',
         user: req.user
     });
 });
@@ -98,7 +140,9 @@ app.get('/profile', async (req, res) => {
         if (!user) {
             return res.redirect("/");
         }
-        res.render('profile', { user });
+        res.render('profile', { user ,
+            currentPage: 'profile',
+        });
         
     } catch (err) {
         console.error('Error fetching user profile:', err.message);
@@ -177,6 +221,30 @@ app.get('/wallet/generate', async (req, res) => {
     } catch (err) {
         console.error('Error generating wallet:', err.message);
         res.status(500).json({ message: 'Server error', error: err.message });
+    }
+});
+
+app.get('/comments/:page', async (req, res) => {
+    try {
+        const comments = await Comment.find({ page: req.params.page }).populate('userId', 'username');
+        res.json(comments);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+app.post('/comments', async (req, res) => {
+    try {
+        const { page, content } = req.body;
+        const newComment = new Comment({
+            userId: req.user._id,
+            page,
+            content
+        });
+        await newComment.save();
+        res.status(201).json(newComment);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

@@ -1,0 +1,6 @@
+<% comments.forEach(comment => { %>
+      <div class="p-4 border rounded-lg bg-muted/20">
+          <div class="text-sm font-medium mb-2"><%= comment.userId.username %></div>
+          <div class="text-sm text-muted-foreground"><%= comment.content %></div>
+      </div>
+  <% }) %>
