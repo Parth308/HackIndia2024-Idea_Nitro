@@ -55,4 +55,4 @@ Our project aims to demonstrate the practical application of blockchain technolo
 - **HTML/CSS**: For frontend design and user interaction.
 
 ### Deployed project:
-https://cf94-2409-40d2-33-8ddb-75ad-d9a8-816-452a.ngrok-free.app/
+https://hack-india2024-idea-nitro.vercel.app/
