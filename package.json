@@ -4,10 +4,13 @@
   "description": "hackindia 2024",
   "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "build": "tailwindcss build styles.css -o public/css/output.css",
     "watch": "postcss styles.css -o public/css/output.css --watch",
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
